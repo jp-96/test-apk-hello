@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "695643272930",
+    "project_id": "test-apk-hello",
+    "storage_bucket": "test-apk-hello.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695643272930:android:ef72bc11ddfcddeacdd0bb",
+        "android_client_info": {
+          "package_name": "com.example.test_apk_hello"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXtifo9jqIni6Xp3thaemKn6PFyMkVmc4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
