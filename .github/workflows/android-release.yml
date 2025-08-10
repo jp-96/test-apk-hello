@@ -25,6 +25,8 @@ jobs:
 
     # - name: Grant execute permission to gradlew
     #     run: chmod +x ./gradlew
+    - name: Grant execute permission to gradlew
+      run: chmod +x ./gradlew
 
     - name: Build with Gradle
       run: ./gradlew assembleRelease
@@ -40,3 +42,4 @@ jobs:
         files: app/build/outputs/apk/release/app-release.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
