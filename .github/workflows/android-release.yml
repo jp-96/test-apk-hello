@@ -34,16 +34,28 @@ jobs:
         STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         STORE_FILE: release.jks
 
-    - name: Get apk path
-      id: apk-path
-      run: |
-        path=$(find **/build/outputs/apk -name '*.apk' -type f | head -1)
-        echo "::set-output name=path::$path"
-
-    - name: Upload APK to GitHub Releases
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ${{ steps.apk-path.outputs.path }}
+    # repository name: ${{ steps.repository.outputs.name }}
+    - id: repository
+      run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+    
+    # Settings > Actions > General > Workflow permissions: Read and write permissions
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: APK ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./app/releae/app-release.apk
+        asset_name: ${{ steps.repository.outputs.name }}.${{ github.ref_name }}.apk
+        asset_content_type: application/octet-stream
