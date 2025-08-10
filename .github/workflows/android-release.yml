@@ -4,65 +4,66 @@ on:
   push:
     tags:
       - "*"
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Set up Java 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-    - name: Decode keystore
-      run: |
-        echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./app/release.jks
+      - name: Decode keystore from secret
+        run: |
+          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > ./app/release.jks
 
-    - name: Grant execute permission to gradlew
-      run: chmod +x ./gradlew
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew assembleRelease
-      env:
-        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-        STORE_FILE: release.jks
-    
-    - name: Find APK path
-      id: find_apk
-      run: |
-        APK_PATH=$(find ./app -name "*.apk" | head -n 1)
-        echo "APK found at: $APK_PATH"
-        echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+      - name: Build APK (Release)
+        run: ./gradlew assembleRelease
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          STORE_FILE: release.jks
 
-    # repository name: ${{ steps.repository.outputs.name }}
-    - id: repository
-      run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
-    
-    # Settings > Actions > General > Workflow permissions: Read and write permissions
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: APK ${{ github.ref }}
-        draft: false
-        prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{ steps.find_apk.outputs.apk_path }}
-        asset_name: ${{ steps.repository.outputs.name }}.${{ github.ref_name }}.apk
-        asset_content_type: application/octet-stream
+      - name: Locate generated APK
+        id: find_apk
+        run: |
+          APK_PATH=$(find ./app -name "*.apk" | head -n 1)
+          echo "APK found at: $APK_PATH"
+          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+
+      - name: Get repository name
+        id: repository
+        run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+
+      # Ensure workflow permissions: Settings > Actions > General > Workflow permissions: Read and write
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: APK ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload APK to Release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.find_apk.outputs.apk_path }}
+          asset_name: ${{ steps.repository.outputs.name }}.${{ github.ref_name }}.apk
+          asset_content_type: application/octet-stream
