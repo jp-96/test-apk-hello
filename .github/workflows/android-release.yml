@@ -35,7 +35,7 @@ jobs:
         STORE_FILE: release.jks
     
     - name: List files
-      run: find ./app/build
+      run: find ./app
 
     # repository name: ${{ steps.repository.outputs.name }}
     - id: repository
