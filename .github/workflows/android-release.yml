@@ -35,7 +35,7 @@ jobs:
         STORE_FILE: release.jks
     
     - name: List files
-      run: find ./app
+      run: find ./ -name "*.apk"
 
     # repository name: ${{ steps.repository.outputs.name }}
     - id: repository
