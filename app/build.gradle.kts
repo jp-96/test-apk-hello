@@ -18,15 +18,31 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            val signingEnabled = System.getenv("FORCE_ENABLE_SIGNING")?.toBoolean() ?: false
+            if (signingEnabled) {
+                storeFile = file(System.getenv("KEYSTORE_PATH"))
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+    
     buildTypes {
-        release {
+        getByName("release") {
+            val signingEnabled = System.getenv("FORCE_ENABLE_SIGNING")?.toBoolean() ?: false
+            signingConfig = if (signingEnabled) signingConfigs.getByName("release") else null
             isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
