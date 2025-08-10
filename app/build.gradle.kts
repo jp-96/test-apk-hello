@@ -22,8 +22,8 @@ android {
         create("release") {
             val signingEnabled = System.getenv("GITHUB_ACTIONS")?.toBoolean() ?: false
             if (signingEnabled) {
-                storeFile = file(System.getenv("KEYSTORE_PATH"))
-                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                storeFile = file(System.getenv("STORE_FILE"))
+                storePassword = System.getenv("STORE_PASSWORD")
                 keyAlias = System.getenv("KEY_ALIAS")
                 keyPassword = System.getenv("KEY_PASSWORD")
             }
