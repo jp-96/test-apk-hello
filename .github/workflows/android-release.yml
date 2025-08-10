@@ -35,11 +35,11 @@ jobs:
         STORE_FILE: release.jks
     
     - name: Find APK path
-        id: find_apk
-        run: |
-          APK_PATH=$(find ./app -name "*.apk" | head -n 1)
-          echo "APK found at: $APK_PATH"
-          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+      id: find_apk
+      run: |
+        APK_PATH=$(find ./app -name "*.apk" | head -n 1)
+        echo "APK found at: $APK_PATH"
+        echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
 
     # repository name: ${{ steps.repository.outputs.name }}
     - id: repository
