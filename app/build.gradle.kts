@@ -20,7 +20,7 @@ android {
 
     signingConfigs {
         create("release") {
-            val signingEnabled = System.getenv("FORCE_ENABLE_SIGNING")?.toBoolean() ?: false
+            val signingEnabled = System.getenv("GITHUB_ACTIONS")?.toBoolean() ?: false
             if (signingEnabled) {
                 storeFile = file(System.getenv("KEYSTORE_PATH"))
                 storePassword = System.getenv("KEYSTORE_PASSWORD")
@@ -32,7 +32,7 @@ android {
     
     buildTypes {
         getByName("release") {
-            val signingEnabled = System.getenv("FORCE_ENABLE_SIGNING")?.toBoolean() ?: false
+            val signingEnabled = System.getenv("GITHUB_ACTIONS")?.toBoolean() ?: false
             signingConfig = if (signingEnabled) signingConfigs.getByName("release") else null
             isMinifyEnabled = false
             isShrinkResources = false
