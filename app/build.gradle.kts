@@ -1,7 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    // Make sure that you have the Google services Gradle plugin
     id("com.google.gms.google-services")
+    // Add the App Distribution Gradle plugin
+    id("com.google.firebase.appdistribution")
 }
 
 android {
@@ -40,15 +43,21 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            firebaseAppDistribution {
+                serviceCredentialsFile = "${rootProject.projectDir}/firebase.json"
+                artifactType = "APK"
+                releaseNotes = "by gradle"
+                groups = "Athlete"
+            }
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         viewBinding = true
