@@ -41,7 +41,17 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           STORE_FILE: ${{ github.workspace }}/release.jks
-          
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/firebase.json
+
+      - name: Show Gradle problems report
+        if: failure()
+        run: |
+          if [ -f build/reports/problems/problems-report.html ]; then
+            cat build/reports/problems/problems-report.html
+          else
+            echo "problems-report.html not found"
+          fi
+
       - name: Locate and rename generated APK
         id: find_apk
         run: |
