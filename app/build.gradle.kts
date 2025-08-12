@@ -44,7 +44,6 @@ android {
                 "proguard-rules.pro"
             )
             firebaseAppDistribution {
-                serviceCredentialsFile = "${rootProject.projectDir}/firebase.json"
                 artifactType = "APK"
                 releaseNotes = "by gradle"
                 groups = "Athlete"
