@@ -35,7 +35,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build APK (Release)
-        run: ./gradlew appDistributionUploadRelease --stacktrace
+        run: ./gradlew assembleRelease appDistributionUploadRelease --stacktrace
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -43,14 +43,14 @@ jobs:
           STORE_FILE: ${{ github.workspace }}/release.jks
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/firebase.json
 
-      - name: Show Gradle problems report
-        if: failure()
-        run: |
-          if [ -f build/reports/problems/problems-report.html ]; then
-            cat build/reports/problems/problems-report.html
-          else
-            echo "problems-report.html not found"
-          fi
+      # - name: Show Gradle problems report
+      #   if: failure()
+      #   run: |
+      #     if [ -f build/reports/problems/problems-report.html ]; then
+      #       cat build/reports/problems/problems-report.html
+      #     else
+      #       echo "problems-report.html not found"
+      #     fi
 
       - name: Locate and rename generated APK
         id: find_apk
