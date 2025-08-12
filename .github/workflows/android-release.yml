@@ -35,7 +35,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build APK (Release)
-        run: ./gradlew appDistributionUploadRelease
+        run: ./gradlew appDistributionUploadRelease --stacktrace
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
