@@ -45,8 +45,14 @@ android {
             )
             firebaseAppDistribution {
                 artifactType = "APK"
-                releaseNotes = "by gradle"
-                groups = "Athlete"
+                val envReleaseNotes = System.getenv("FIREBASE_RELEASE_NOTES")
+                if (!envReleaseNotes.isNullOrBlank()) {
+                    releaseNotes = envReleaseNotes
+                }
+                val envGroups = System.getenv("FIREBASE_GROUPS")
+                if (!envGroups.isNullOrBlank()) {
+                    groups = envGroups
+                }
             }
         }
     }
