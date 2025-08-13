@@ -73,15 +73,17 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_FOR_TEST_APK_HELLO_REL }}
           TAG_NAME: ${{ github.ref_name }}
           APK_PATH: ${{ steps.find_apk.outputs.release_apk_path }}
+          GH_OWNER: jp-96
+          GH_REPO: test-apk-hello-rel
         run: |
           gh api \
             -X POST \
             -H "Accept: application/vnd.github+json" \
-            /repos/jp-96/test-apk-hello-rel/git/refs \
+            /repos/$GH_OWNER/$GH_REPO/git/refs \
             -f ref="refs/tags/$TAG_NAME" \
-            -f sha="$(gh api /repos/jp-96/test-apk-hello-rel/commits/main --jq .sha)"
+            -f sha="$(gh api /repos/$GH_OWNER/$GH_REPO/commits/main --jq .sha)"
           gh release create "$TAG_NAME" \
-            --repo jp-96/test-apk-hello-rel \
+            --repo $GH_OWNER/$GH_REPO \
             --title "APK $TAG_NAME" \
-            --notes "Automated release from CI" \
+            --notes "外部にリリースしました。" \
             "$APK_PATH"
